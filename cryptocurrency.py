@@ -49,11 +49,11 @@ def main():
                     'fields': [
                         {
                             'name': 'Bitcoin',
-                            'value': f'{btc_dollar} dollars\n{btc_euro} euro\n{btc_pln} pln',
+                            'value': f'{"{:,}".format(btc_dollar)} dollars\n{"{:,}".format(btc_euro)} euro\n{"{:,}".format(btc_pln)} pln',
                         },
                         {
                             'name': 'Ethereum',
-                            'value': f'{eth_dollar} dollars\n{eth_euro} euro\n{eth_pln} pln',
+                            'value': f'{"{:,}".format(eth_dollar)} dollars\n{"{:,}".format(eth_euro)} euro\n{"{:,}".format(eth_pln)} pln',
                         },
                     ],
                     'footer': {
