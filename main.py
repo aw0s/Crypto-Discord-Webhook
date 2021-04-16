@@ -1,10 +1,17 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import requests
+import os
+from datetime import datetime
 from json import loads
 from time import sleep
-from datetime import datetime
+
+import requests
+from dotenv import load_dotenv
+
+
+load_dotenv()
+WEBHOOK_URL = os.environ.get('WEBHOOK_URL')
 
 
 def get_currency_price(currency: str) -> float:
@@ -12,19 +19,20 @@ def get_currency_price(currency: str) -> float:
     data_nbp = loads(data_nbp_text)
 
     if currency == 'euro':
-        euro_in_pln = float(data_nbp[0]['rates'][7]['mid'])
+        euro_in_pln = float(data_nbp.get(0).get('rates').get(7).get('mid'))
         return euro_in_pln
     elif currency == 'dollar':
-        dollars_in_pln = float(data_nbp[0]['rates'][1]['mid'])
+        dollars_in_pln = float(data_nbp.get(0).get('rates').get(1).get('mid'))
         return dollars_in_pln
 
 
 def main():
-    webhook_url = ''  # Insert link to your Discord webhook here.
 
     while True:
         data_text = requests.get('https://api.coingecko.com/api/v3/coins/markets?vs_currency=pln&order=market_cap_desc&per_page=100&page=1&sparkline=false').text
         data = loads(data_text)
+
+        date_and_hour = datetime.now().strftime('%d/%m/%Y %H:%m')
 
         euro_value_pln = get_currency_price('euro')
         dollar_value_pln = get_currency_price('dollar')
@@ -37,8 +45,6 @@ def main():
         eth_euro = round(eth_pln / euro_value_pln)
         eth_dollar = round(eth_pln / dollar_value_pln)
         
-        date_and_hour = datetime.now().strftime('%d/%m/%Y %H:%m')
-        
         data = {
             'username': 'Crypto Webhook',
             'embeds': [
@@ -49,11 +55,11 @@ def main():
                     'fields': [
                         {
                             'name': 'Bitcoin',
-                            'value': f'{"{:,}".format(btc_dollar)} dollars\n{"{:,}".format(btc_euro)} euro\n{"{:,}".format(btc_pln)} pln',
+                            'value': f'{"{:,}".format(btc_dollar)} USD\n{"{:,}".format(btc_euro)} EUR\n{"{:,}".format(btc_pln)} PLN',
                         },
                         {
                             'name': 'Ethereum',
-                            'value': f'{"{:,}".format(eth_dollar)} dollars\n{"{:,}".format(eth_euro)} euro\n{"{:,}".format(eth_pln)} pln',
+                            'value': f'{"{:,}".format(eth_dollar)} USD\n{"{:,}".format(eth_euro)} EUR\n{"{:,}".format(eth_pln)} PLN',
                         },
                     ],
                     'footer': {
@@ -65,7 +71,7 @@ def main():
         }
 
         requests.post(
-            webhook_url,
+            WEBHOOK_URL,
             json=data,
         )
 
