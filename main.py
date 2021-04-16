@@ -26,7 +26,7 @@ def get_currency_price(currency: str) -> float:
         return dollars_in_pln
 
 
-def main():
+def main() -> None:
 
     while True:
         data_text = requests.get('https://api.coingecko.com/api/v3/coins/markets?vs_currency=pln&order=market_cap_desc&per_page=100&page=1&sparkline=false').text
@@ -37,11 +37,11 @@ def main():
         euro_value_pln = get_currency_price('euro')
         dollar_value_pln = get_currency_price('dollar')
 
-        btc_pln = round(data[0]['current_price'])
+        btc_pln = round(data.get(0).get('current_price'))
         btc_euro = round(btc_pln / euro_value_pln)
         btc_dollar = round(btc_pln / dollar_value_pln)
 
-        eth_pln = round(data[1]['current_price'])
+        eth_pln = round(data.get(1).get('current_price'))
         eth_euro = round(eth_pln / euro_value_pln)
         eth_dollar = round(eth_pln / dollar_value_pln)
         
